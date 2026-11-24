@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Predicción de Reposición · Inventario Dietética{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body p-4">
+                <h1 class="h4 mb-2">Predicción de Reposición con IA</h1>
+                <p class="text-muted small mb-4">
+                    Ingresá los parámetros operativos del producto para estimar mediante Regresión Logística si requiere reposición inmediata.
+                </p>
+
+                <form method="post" action="{{ url_for('prediccion.index') }}">
+                    <div class="mb-3">
+                        <label for="stock_actual" class="form-label">Stock Actual</label>
+                        <input type="number" step="0.01" min="0" class="form-control" id="stock_actual" name="stock_actual" value="{{ datos.get('stock_actual', '') }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="ventas_diarias" class="form-label">Ventas Diarias Promedio</label>
+                        <input type="number" step="0.01" min="0.01" class="form-control" id="ventas_diarias" name="ventas_diarias" value="{{ datos.get('ventas_diarias', '') }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="dias_entrega" class="form-label">Tiempo de Entrega del Proveedor (días)</label>
+                        <input type="number" step="1" min="1" class="form-control" id="dias_entrega" name="dias_entrega" value="{{ datos.get('dias_entrega', '') }}" required>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Evaluar Reposición</button>
+                </form>
+            </div>
+        </div>
+
+        {% if resultado %}
+        <div class="card shadow-sm border-0 border-start border-4 {{ 'border-danger' if resultado.necesita_reposicion else 'border-success' }}">
+            <div class="card-body p-4">
+                <h2 class="h5 mb-2">Resultado del Modelo</h2>
+                <p class="fs-4 fw-bold mb-1 {{ 'text-danger' if resultado.necesita_reposicion else 'text-success' }}">
+                    {{ resultado.veredicto }}
+                </p>
+                <p class="mb-1">
+                    <strong>Confianza estimada:</strong> {{ resultado.probabilidad }}%
+                </p>
+                <p class="text-muted small mb-0">
+                    Cobertura estimada actual: {{ resultado.dias_cobertura }} días de stock.
+                </p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
