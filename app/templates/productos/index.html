@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Productos · Inventario Dietética{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Inventario de Productos</h1>
+    <a href="{{ url_for('productos.nuevo') }}" class="btn btn-success">+ Nuevo Producto</a>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        {% if productos %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Categoría</th>
+                        <th>Precio Unitario</th>
+                        <th>Stock Actual</th>
+                        <th>Unidad</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for prod in productos %}
+                    <tr>
+                        <td>{{ prod.id }}</td>
+                        <td class="fw-semibold">{{ prod.nombre }}</td>
+                        <td><span class="badge bg-secondary">{{ prod.categoria }}</span></td>
+                        <td>${{ "%.2f"|format(prod.precio_unitario) }}</td>
+                        <td>{{ "%.2f"|format(prod.stock_actual) }}</td>
+                        <td>{{ prod.unidad_medida }}</td>
+                        <td class="text-end">
+                            <a href="{{ url_for('productos.editar', id=prod.id) }}" class="btn btn-sm btn-outline-primary">Editar</a>
+                            <form method="post" action="{{ url_for('productos.eliminar', id=prod.id) }}" class="d-inline" onsubmit="return confirm('¿Confirmás la eliminación de {{ prod.nombre }}?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="p-4 text-center text-muted">
+            No hay productos cargados en el inventario.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
