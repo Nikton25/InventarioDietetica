@@ -1,7 +1,7 @@
-import numpy as np
 from flask import current_app, flash, render_template, request
 from flask_login import login_required
 from app.prediccion import prediccion_bp
+from ml.train_model import build_features
 
 
 @prediccion_bp.route("/prediccion", methods=["GET", "POST"])
@@ -28,7 +28,7 @@ def index():
             return render_template("prediccion/index.html", resultado=None, datos=datos)
 
         model = current_app.config["ML_MODEL"]
-        features = np.array([[stock_actual, ventas_diarias, dias_entrega]])
+        features = build_features(stock_actual, ventas_diarias, dias_entrega)
         prediccion = int(model.predict(features)[0])
         probabilidades = model.predict_proba(features)[0]
         prob_clase = float(probabilidades[prediccion]) * 100.0
