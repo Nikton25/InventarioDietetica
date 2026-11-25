@@ -15,6 +15,9 @@ def ensure_admin_user(app: Flask) -> Usuario | None:
 
     existing = Usuario.query.filter_by(username=username).first()
     if existing:
+        if not bcrypt.check_password_hash(existing.password_hash, password):
+            existing.password_hash = bcrypt.generate_password_hash(password).decode("utf-8")
+            db.session.commit()
         return existing
 
     password_hash = bcrypt.generate_password_hash(password).decode("utf-8")

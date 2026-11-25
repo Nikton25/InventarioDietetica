@@ -1,3 +1,4 @@
+from app import ensure_admin_user
 from app.config import normalize_database_url
 from app.extensions import bcrypt, db
 from app.models import Producto, Usuario
@@ -14,6 +15,25 @@ def test_admin_user_created_automatically_on_startup(app):
         admin = Usuario.query.filter_by(username="admin_test").first()
         assert admin is not None
         assert bcrypt.check_password_hash(admin.password_hash, "clave_segura_123")
+
+
+def test_ensure_admin_user_updates_password_when_changed(app):
+    with app.app_context():
+        admin = Usuario.query.filter_by(username="admin_test").first()
+        original_hash = admin.password_hash
+
+        # Si la contraseña no cambió, no re-hashea
+        ensure_admin_user(app)
+        admin = Usuario.query.filter_by(username="admin_test").first()
+        assert admin.password_hash == original_hash
+
+        # Si ADMIN_PASSWORD cambia, actualiza el hash en la base de datos
+        app.config["ADMIN_PASSWORD"] = "nueva_clave_super_segura_456"
+        ensure_admin_user(app)
+        admin = Usuario.query.filter_by(username="admin_test").first()
+        assert admin.password_hash != original_hash
+        assert bcrypt.check_password_hash(admin.password_hash, "nueva_clave_super_segura_456")
+        assert not bcrypt.check_password_hash(admin.password_hash, "clave_segura_123")
 
 
 def test_producto_model_persistence(app):
