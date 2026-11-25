@@ -46,6 +46,21 @@ def test_prediccion_post_stock_suficiente(logged_in_client):
     assert "%" in text
 
 
+def test_prediccion_post_low_stock_low_sales_necesita_reposicion(logged_in_client):
+    response = logged_in_client.post(
+        "/prediccion",
+        data={
+            "stock_actual": "2",
+            "ventas_diarias": "1.5",
+            "dias_entrega": "5",
+        },
+    )
+    text = response.get_data(as_text=True)
+    assert response.status_code == 200
+    assert "Necesita reposición" in text
+    assert "%" in text
+
+
 def test_prediccion_post_invalid_values_flashes_danger(logged_in_client):
     response = logged_in_client.post(
         "/prediccion",
