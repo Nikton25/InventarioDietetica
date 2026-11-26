@@ -9,9 +9,6 @@ Aplicación web desarrollada en **Flask** con arquitectura **App Factory + Bluep
 - **Predicción de Reposición (IA):** Clasificador binario con `scikit-learn` y `joblib` que evalúa `stock_actual`, `ventas_diarias` y `dias_entrega` para emitir un veredicto y porcentaje de probabilidad.
 - **Inicialización automática:** Creación automática de tablas y del usuario administrador inicial a partir de variables de entorno al iniciar la aplicación.
 
-## Nota sobre Verbos HTTP en Formularios HTML
-
-Dado que los formularios HTML estándar soportan únicamente los métodos `GET` y `POST`, las operaciones de actualización y eliminación del CRUD de productos se exponen mediante peticiones `POST` en rutas semánticas dedicadas (`/productos/<id>/editar` y `/productos/<id>/eliminar`), manteniendo la navegación sin dependencia de llamadas `fetch`/AJAX.
 
 ## Requisitos e Instalación Local
 
@@ -44,12 +41,3 @@ Dado que los formularios HTML estándar soportan únicamente los métodos `GET` 
    python run.py
    ```
 
-## Despliegue en Render
-
-- **Build Command:** `pip install -r requirements.txt`
-- **Start Command:** `gunicorn run:app`
-- **Variables de entorno requeridas en Render:**
-  - `SECRET_KEY`
-  - `DATABASE_URL` (URI de la instancia PostgreSQL de Render)
-  - `ADMIN_USERNAME`
-  - `ADMIN_PASSWORD`
